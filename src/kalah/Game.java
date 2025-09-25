@@ -8,6 +8,7 @@ public class Game {
     private Board board;
     private Player currentPlayer;
     private Player opponent;
+    private boolean quitRequested = false;
 
     public Game(Board board) {
         this.board = board;
@@ -30,34 +31,99 @@ public class Game {
             io.println("    q - Quit");
             io.print("Choice:");
             String input = io.readFromKeyboard("");
-            if (input.equals("q")) {
-                io.println("Game over");
-                board.printBoard(io);
+
+            Command command = createCommand(input, io);
+            if (command != null) {
+                command.execute();
+            }
+
+            if (quitRequested) {
                 break;
             }
-
-            if (!InputValidation.isValidInput(input, board.getHouseCount(), io)) {
-                continue;
-            }
-
-            int houseNumber = Integer.parseInt(input);
-
-            if (!InputValidation.isValidHouseNumber(houseNumber, board.getHouseCount(), io)) {
-                continue;
-            }
-
-            List<House> allHouses = currentPlayer.getHouses();
-            int indexSelectedHouse = houseNumber - 1;
-            int seedAtSelectedHouse = allHouses.get(indexSelectedHouse).countSeed();
-            if (seedAtSelectedHouse == 0) {
-                io.println("House is empty. Move again.");
-                continue;
-            }
-
-            takeTurn(houseNumber, io);
         }
     }
 
+
+    // Methods used to check if Game is over:
+    private boolean isGameOver(IO io) {
+        if (!hasMoveLeft()) {
+            io.println("Game over");
+            board.printBoard(io);
+            displayResult(io);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasMoveLeft() {
+        for (House house : currentPlayer.getHouses()) {
+            if (house.countSeed() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void displayResult(IO io) {
+        SeedMove seedMove = new SeedMove(currentPlayer);
+        seedMove.moveSeedsToStore(board.getPlayer1());
+        seedMove.moveSeedsToStore(board.getPlayer2());
+        int totalSeedsPlayer1 = board.getPlayer1().getStore().countSeed();
+        int totalSeedsPlayer2 = board.getPlayer2().getStore().countSeed();
+        io.println("\tplayer 1:" + totalSeedsPlayer1);
+        io.println("\tplayer 2:" + totalSeedsPlayer2);
+
+        if (totalSeedsPlayer1 > totalSeedsPlayer2) {
+            io.println("Player 1 wins!");
+        } else if (totalSeedsPlayer1 < totalSeedsPlayer2) {
+            io.println("Player 2 wins!");
+        } else {
+            io.println("A tie!");
+        }
+    }
+
+
+    // Method to create Command depending on user's input:
+    private Command createCommand(String input, IO io) {
+        if (input == null) {
+            return null;
+        }
+
+        if (input.equalsIgnoreCase("q")) {
+            return new QuitCommand(this, io);
+        } else if (input.equalsIgnoreCase("N")) {
+            return new NewGameCommand(this);
+        } else if (input.equalsIgnoreCase("S")) {
+            return new SaveGameCommand(this);
+        } else if (input.equalsIgnoreCase("L")) {
+            return new LoadGameCommand(this);
+        }
+        return new MoveCommand(this, io, input);
+    }
+
+
+    // Command Pattern: Method for MoveCommand class to use:
+    public void handleMoveCommand(String input, IO io) {
+        if (!InputValidation.isValidInput(input, board.getHouseCount(), io)) {
+            return;
+        }
+
+        int houseNumber = Integer.parseInt(input);
+
+        if (!InputValidation.isValidHouseNumber(houseNumber, board.getHouseCount(), io)) {
+            return;
+        }
+
+        List<House> allHouses = currentPlayer.getHouses();
+        int indexSelectedHouse = houseNumber - 1;
+        int seedAtSelectedHouse = allHouses.get(indexSelectedHouse).countSeed();
+        if (seedAtSelectedHouse == 0) {
+            io.println("House is empty. Move again.");
+            return;
+        }
+
+        takeTurn(houseNumber, io);
+    }
 
     private void takeTurn(int houseNumber, IO io) {
         // Do the sowing
@@ -85,49 +151,38 @@ public class Game {
         switchPlayer();
     }
 
-
     private void switchPlayer() {
         currentPlayer = (currentPlayer == board.getPlayer1()) ? board.getPlayer2() : board.getPlayer1();
         opponent = (opponent == board.getPlayer2()) ? board.getPlayer1() : board.getPlayer2();
     }
 
 
-    private boolean hasMoveLeft() {
-        for (House house : currentPlayer.getHouses()) {
-            if (house.countSeed() > 0) {
-                return true;
-            }
-        }
-        return false;
+    // Command Pattern: Method for NewGameCommand class to use:
+    public void createNewGame() {
+        board.createBoard();
+        this.currentPlayer = board.getPlayer1();
+        this.opponent = board.getPlayer2();
     }
 
 
-    private boolean isGameOver(IO io) {
-        if (!hasMoveLeft()) {
-            io.println("Game over");
-            board.printBoard(io);
-            displayResult(io);
-            return true;
-        }
-        return false;
+    // Command Pattern: Method for SaveGameCommand class to use:
+    public void saveGame() {
+        System.out.println("Saving game");
     }
 
 
-    private void displayResult(IO io) {
-        SeedMove seedMove = new SeedMove(currentPlayer);
-        seedMove.moveSeedsToStore(board.getPlayer1());
-        seedMove.moveSeedsToStore(board.getPlayer2());
-        int totalSeedsPlayer1 = board.getPlayer1().getStore().countSeed();
-        int totalSeedsPlayer2 = board.getPlayer2().getStore().countSeed();
-        io.println("\tplayer 1:" + totalSeedsPlayer1);
-        io.println("\tplayer 2:" + totalSeedsPlayer2);
+    // Command Pattern: Method for LoadGameCommand class to use:
+    public void loadGame() {
+        System.out.println("Loading game");
+    }
 
-        if (totalSeedsPlayer1 > totalSeedsPlayer2) {
-            io.println("Player 1 wins!");
-        } else if (totalSeedsPlayer1 < totalSeedsPlayer2) {
-            io.println("Player 2 wins!");
-        } else {
-            io.println("A tie!");
-        }
+
+    // Command Pattern: Methods for QuitCommand class to use:
+    public void requestQuit() {
+        this.quitRequested = true;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 }
