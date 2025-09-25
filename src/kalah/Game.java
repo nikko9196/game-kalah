@@ -22,7 +22,13 @@ public class Game {
                 break;
             }
 
-            io.print("Player " + currentPlayer.getName() + "'s turn - Specify house number or 'q' to quit: ");
+            io.println("Player " + currentPlayer.getName());
+            io.println("    (1-6) - house number for move");
+            io.println("    N - New game");
+            io.println("    S - Save game");
+            io.println("    L - Load game");
+            io.println("    q - Quit");
+            io.print("Choice:");
             String input = io.readFromKeyboard("");
             if (input.equals("q")) {
                 io.println("Game over");
