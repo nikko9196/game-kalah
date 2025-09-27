@@ -97,7 +97,7 @@ public class Game {
         } else if (input.equalsIgnoreCase("S")) {
             return new SaveGameCommand(this);
         } else if (input.equalsIgnoreCase("L")) {
-            return new LoadGameCommand(this);
+            return new LoadGameCommand(this, io);
         }
         return new MoveCommand(this, io, input);
     }
@@ -175,9 +175,10 @@ public class Game {
 
 
     // Command Pattern (Memento Pattern is also applied): Method for LoadGameCommand class to use:
-    public void loadGame() {
+    public void loadGame(IO io) {
         BoardSnapShot lastSnap = gameCareTaker.loadBoard();
         if (lastSnap == null) {
+            io.println("No saved game");
             return;
         }
 
