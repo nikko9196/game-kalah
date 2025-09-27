@@ -9,6 +9,7 @@ public class Game {
     private Player currentPlayer;
     private Player opponent;
     private boolean quitRequested = false;
+    private GameCareTaker gameCareTaker = new GameCareTaker();
 
     public Game(Board board) {
         this.board = board;
@@ -157,23 +158,59 @@ public class Game {
     }
 
 
-    // Command Pattern: Method for NewGameCommand class to use:
+    // Command Pattern (Memento Pattern is also applied): Method for NewGameCommand class to use:
     public void createNewGame() {
         board.createBoard();
         this.currentPlayer = board.getPlayer1();
         this.opponent = board.getPlayer2();
+        gameCareTaker.clearBoardSnapShot();
     }
 
 
-    // Command Pattern: Method for SaveGameCommand class to use:
+    // Command Pattern (Memento Pattern is also applied): Method for SaveGameCommand class to use:
     public void saveGame() {
-        System.out.println("Saving game");
+        BoardSnapShot snapShot = new BoardSnapShot(board.getPlayer1(), board.getPlayer2(), currentPlayer);
+        gameCareTaker.saveBoard(snapShot);
     }
 
 
-    // Command Pattern: Method for LoadGameCommand class to use:
+    // Command Pattern (Memento Pattern is also applied): Method for LoadGameCommand class to use:
     public void loadGame() {
-        System.out.println("Loading game");
+        BoardSnapShot lastSnap = gameCareTaker.loadBoard();
+        if (lastSnap == null) {
+            return;
+        }
+
+        // Step 1: Create a board after loading:
+        Board loadedBoard = new Board(board.getHouseCount(), 0, false);
+
+        // Step 2A: Restore P1 houses:
+        for (int i = 0; i < loadedBoard.getHouseCount(); i++) {
+            House house = loadedBoard.getPlayer1().getHouses().get(i);
+            house.addSeed(lastSnap.getPlayer1State().getHouses().get(i));
+        }
+
+        // Step 2B: Restore P2 houses:
+        for (int i = 0; i < loadedBoard.getHouseCount(); i++) {
+            House house = loadedBoard.getPlayer2().getHouses().get(i);
+            house.addSeed(lastSnap.getPlayer2State().getHouses().get(i));
+        }
+
+        // Step 3: Restore P1 and P2 stores:
+        loadedBoard.getPlayer1().getStore().addSeed(lastSnap.getPlayer1State().getStore());
+        loadedBoard.getPlayer2().getStore().addSeed(lastSnap.getPlayer2State().getStore());
+
+        // Step 4: Swap the loaded board into the game:
+        this.board = loadedBoard;
+
+        // Step 5: Restore current player:
+        if ("P1".equals(lastSnap.getCurrentPlayerName())) {
+            this.currentPlayer = board.getPlayer1();
+            this.opponent = board.getPlayer2();
+        } else {
+            this.currentPlayer = board.getPlayer2();
+            this.opponent = board.getPlayer1();
+        }
     }
 
 
