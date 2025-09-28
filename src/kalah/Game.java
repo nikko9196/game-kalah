@@ -6,15 +6,13 @@ import java.util.List;
 
 public class Game {
     private Board board;
-    private Player currentPlayer;
-    private Player opponent;
     private boolean quitRequested = false;
     private GameCareTaker gameCareTaker = new GameCareTaker();
+    private TurnManager currentTurn;
 
     public Game(Board board) {
         this.board = board;
-        this.currentPlayer = board.getPlayer1();
-        this.opponent = board.getPlayer2();
+        this.currentTurn = new TurnManager(board, board.getPlayer1(), board.getPlayer2());
     }
 
     public void play(IO io) {
@@ -24,7 +22,7 @@ public class Game {
                 break;
             }
 
-            io.println("Player " + currentPlayer.getName());
+            io.println("Player " + currentTurn.getCurrentPlayer().getName());
             io.println("    (1-6) - house number for move");
             io.println("    N - New game");
             io.println("    S - Save game");
@@ -37,7 +35,6 @@ public class Game {
             if (command != null) {
                 command.execute();
             }
-
             if (quitRequested) {
                 break;
             }
@@ -57,7 +54,7 @@ public class Game {
     }
 
     private boolean hasMoveLeft() {
-        for (House house : currentPlayer.getHouses()) {
+        for (House house : currentTurn.getCurrentPlayer().getHouses()) {
             if (house.countSeed() > 0) {
                 return true;
             }
@@ -66,7 +63,7 @@ public class Game {
     }
 
     private void displayResult(IO io) {
-        SeedMove seedMove = new SeedMove(currentPlayer);
+        SeedMove seedMove = new SeedMove(currentTurn.getCurrentPlayer());
         seedMove.moveSeedsToStore(board.getPlayer1());
         seedMove.moveSeedsToStore(board.getPlayer2());
         int totalSeedsPlayer1 = board.getPlayer1().getStore().countSeed();
@@ -115,7 +112,7 @@ public class Game {
             return;
         }
 
-        List<House> allHouses = currentPlayer.getHouses();
+        List<House> allHouses = currentTurn.getCurrentPlayer().getHouses();
         int indexSelectedHouse = houseNumber - 1;
         int seedAtSelectedHouse = allHouses.get(indexSelectedHouse).countSeed();
         if (seedAtSelectedHouse == 0) {
@@ -123,53 +120,21 @@ public class Game {
             return;
         }
 
-        takeTurn(houseNumber, io);
-    }
-
-    private void takeTurn(int houseNumber, IO io) {
-        // Do the sowing
-        SeedMove seedMove = new SeedMove(currentPlayer);
-        seedMove.sow(currentPlayer, houseNumber, opponent, io);
-
-        // Check different situations after sowing:
-        if (seedMove.isLastSeedAtOwnStore()) {
-            return;
-        }
-
-        if (!seedMove.isLastSeedAtOwnHouse()) {
-            switchPlayer();
-            return;
-        }
-
-        int index = seedMove.getLastLandedHouseIndex();
-        House lastLandedHouse = currentPlayer.getHouses().get(index);
-
-
-        if (lastLandedHouse.countSeed() == 1) {
-            seedMove.captureSeeds(currentPlayer.getHouses(), opponent.getHouses(), index);
-        }
-
-        switchPlayer();
-    }
-
-    private void switchPlayer() {
-        currentPlayer = (currentPlayer == board.getPlayer1()) ? board.getPlayer2() : board.getPlayer1();
-        opponent = (opponent == board.getPlayer2()) ? board.getPlayer1() : board.getPlayer2();
+        currentTurn.takeTurn(houseNumber, io);
     }
 
 
     // Command Pattern (Memento Pattern is also applied): Method for NewGameCommand class to use:
     public void createNewGame() {
         board.createBoard();
-        this.currentPlayer = board.getPlayer1();
-        this.opponent = board.getPlayer2();
+        this.currentTurn = new TurnManager(board, board.getPlayer1(), board.getPlayer2());
         gameCareTaker.clearBoardSnapShot();
     }
 
 
     // Command Pattern (Memento Pattern is also applied): Method for SaveGameCommand class to use:
     public void saveGame() {
-        BoardSnapShot snapShot = new BoardSnapShot(board.getPlayer1(), board.getPlayer2(), currentPlayer);
+        BoardSnapShot snapShot = new BoardSnapShot(board.getPlayer1(), board.getPlayer2(), currentTurn.getCurrentPlayer());
         gameCareTaker.saveBoard(snapShot);
     }
 
@@ -206,11 +171,9 @@ public class Game {
 
         // Step 5: Restore current player:
         if ("P1".equals(lastSnap.getCurrentPlayerName())) {
-            this.currentPlayer = board.getPlayer1();
-            this.opponent = board.getPlayer2();
+            this.currentTurn = new TurnManager(board, board.getPlayer1(), board.getPlayer2());
         } else {
-            this.currentPlayer = board.getPlayer2();
-            this.opponent = board.getPlayer1();
+            this.currentTurn = new TurnManager(board, board.getPlayer2(), board.getPlayer1());
         }
     }
 
