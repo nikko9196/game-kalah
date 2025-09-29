@@ -2,6 +2,8 @@ package kalah;
 
 import com.qualitascorpus.testsupport.IO;
 
+import java.util.List;
+
 public class TurnManager {
     private Board board;
     private Player currentPlayer;
@@ -51,6 +53,28 @@ public class TurnManager {
             }
         }
         return false;
+    }
+
+    public void executeMoveInTurn(String input, IO io) {
+        if (!InputValidation.isValidInput(input, board.getHouseCount(), io)) {
+            return;
+        }
+
+        int houseNumber = Integer.parseInt(input);
+
+        if (!InputValidation.isValidHouseNumber(houseNumber, board.getHouseCount(), io)) {
+            return;
+        }
+
+        List<House> allHouses = currentPlayer.getHouses();
+        int indexSelectedHouse = houseNumber - 1;
+        int seedAtSelectedHouse = allHouses.get(indexSelectedHouse).countSeed();
+        if (seedAtSelectedHouse == 0) {
+            io.println("House is empty. Move again.");
+            return;
+        }
+
+        takeTurn(houseNumber, io);
     }
 
     public Player getCurrentPlayer() {

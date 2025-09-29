@@ -2,8 +2,6 @@ package kalah;
 
 import com.qualitascorpus.testsupport.IO;
 
-import java.util.List;
-
 public class Game {
     private Board board;
     private boolean quitRequested = false;
@@ -64,25 +62,7 @@ public class Game {
 
     // Command Pattern: Method for MoveCommand class to use:
     public void handleMoveCommand(String input, IO io) {
-        if (!InputValidation.isValidInput(input, board.getHouseCount(), io)) {
-            return;
-        }
-
-        int houseNumber = Integer.parseInt(input);
-
-        if (!InputValidation.isValidHouseNumber(houseNumber, board.getHouseCount(), io)) {
-            return;
-        }
-
-        List<House> allHouses = currentTurn.getCurrentPlayer().getHouses();
-        int indexSelectedHouse = houseNumber - 1;
-        int seedAtSelectedHouse = allHouses.get(indexSelectedHouse).countSeed();
-        if (seedAtSelectedHouse == 0) {
-            io.println("House is empty. Move again.");
-            return;
-        }
-
-        currentTurn.takeTurn(houseNumber, io);
+        currentTurn.executeMoveInTurn(input, io);
     }
 
 
