@@ -44,6 +44,15 @@ public class TurnManager {
         opponent = (opponent == board.getPlayer2()) ? board.getPlayer1() : board.getPlayer2();
     }
 
+    public boolean hasMoveLeft() {
+        for (House house : currentPlayer.getHouses()) {
+            if (house.countSeed() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
