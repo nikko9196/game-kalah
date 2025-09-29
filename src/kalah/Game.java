@@ -10,7 +10,7 @@ public class Game {
 
     public Game(Board board) {
         this.board = board;
-        this.currentTurn = new TurnManager(board, board.getPlayer1(), board.getPlayer2());
+        this.currentTurn = new TurnManager(board.getPlayer1(), board.getPlayer2());
     }
 
     public void play(IO io) {
@@ -62,14 +62,14 @@ public class Game {
 
     // Command Pattern: Method for MoveCommand class to use:
     public void handleMoveCommand(String input, IO io) {
-        currentTurn.executeMoveInTurn(input, io);
+        currentTurn.executeMoveInTurn(input, board.getHouseCount(), io);
     }
 
 
     // Command Pattern (Memento Pattern is also applied): Method for NewGameCommand class to use:
     public void createNewGame() {
         board.createBoard();
-        this.currentTurn = new TurnManager(board, board.getPlayer1(), board.getPlayer2());
+        this.currentTurn = new TurnManager(board.getPlayer1(), board.getPlayer2());
         gameCareTaker.clearBoardSnapShot();
     }
 
@@ -113,9 +113,9 @@ public class Game {
 
         // Step 5: Restore current player:
         if ("P1".equals(lastSnap.getCurrentPlayerName())) {
-            this.currentTurn = new TurnManager(board, board.getPlayer1(), board.getPlayer2());
+            this.currentTurn = new TurnManager(board.getPlayer1(), board.getPlayer2());
         } else {
-            this.currentTurn = new TurnManager(board, board.getPlayer2(), board.getPlayer1());
+            this.currentTurn = new TurnManager(board.getPlayer2(), board.getPlayer1());
         }
     }
 

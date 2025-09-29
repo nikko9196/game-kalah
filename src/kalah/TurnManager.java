@@ -5,12 +5,10 @@ import com.qualitascorpus.testsupport.IO;
 import java.util.List;
 
 public class TurnManager {
-    private Board board;
     private Player currentPlayer;
     private Player opponent;
 
-    public TurnManager(Board board, Player currentPlayer, Player opponent) {
-        this.board = board;
+    public TurnManager(Player currentPlayer, Player opponent) {
         this.currentPlayer = currentPlayer;
         this.opponent = opponent;
     }
@@ -42,8 +40,9 @@ public class TurnManager {
     }
 
     private void switchPlayer() {
-        currentPlayer = (currentPlayer == board.getPlayer1()) ? board.getPlayer2() : board.getPlayer1();
-        opponent = (opponent == board.getPlayer2()) ? board.getPlayer1() : board.getPlayer2();
+        Player temp = currentPlayer;
+        currentPlayer = opponent;
+        opponent = temp;
     }
 
     public boolean hasMoveLeft() {
@@ -55,14 +54,14 @@ public class TurnManager {
         return false;
     }
 
-    public void executeMoveInTurn(String input, IO io) {
-        if (!InputValidation.isValidInput(input, board.getHouseCount(), io)) {
+    public void executeMoveInTurn(String input, int houseCount, IO io) {
+        if (!InputValidation.isValidInput(input, houseCount, io)) {
             return;
         }
 
         int houseNumber = Integer.parseInt(input);
 
-        if (!InputValidation.isValidHouseNumber(houseNumber, board.getHouseCount(), io)) {
+        if (!InputValidation.isValidHouseNumber(houseNumber, houseCount, io)) {
             return;
         }
 
