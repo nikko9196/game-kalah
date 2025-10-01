@@ -89,29 +89,16 @@ public class Game {
             return;
         }
 
-        // Step 1: Create a board after loading:
+        // Create a board after loading:
         Board loadedBoard = new Board(board.getHouseCount(), 0, false);
 
-        // Step 2A: Restore P1 houses:
-        for (int i = 0; i < loadedBoard.getHouseCount(); i++) {
-            House house = loadedBoard.getPlayer1().getHouses().get(i);
-            house.addSeed(lastSnap.getPlayer1State().getHouses().get(i));
-        }
+        // Restore Players' houses and stores:
+        lastSnap.restoreBoardState(loadedBoard);
 
-        // Step 2B: Restore P2 houses:
-        for (int i = 0; i < loadedBoard.getHouseCount(); i++) {
-            House house = loadedBoard.getPlayer2().getHouses().get(i);
-            house.addSeed(lastSnap.getPlayer2State().getHouses().get(i));
-        }
-
-        // Step 3: Restore P1 and P2 stores:
-        loadedBoard.getPlayer1().getStore().addSeed(lastSnap.getPlayer1State().getStore());
-        loadedBoard.getPlayer2().getStore().addSeed(lastSnap.getPlayer2State().getStore());
-
-        // Step 4: Swap the loaded board into the game:
+        // Swap the loaded board into the game:
         this.board = loadedBoard;
 
-        // Step 5: Restore current player:
+        // Restore current player:
         if ("P1".equals(lastSnap.getCurrentPlayerName())) {
             this.currentTurn = new TurnManager(board.getPlayer1(), board.getPlayer2());
         } else {

@@ -52,4 +52,22 @@ public class BoardSnapShot {
     public String getCurrentPlayerName() {
         return currentPlayerName;
     }
+
+    public void restoreBoardState(Board loadedBoard) {
+        // Restore P1 houses:
+        for (int i = 0; i < loadedBoard.getHouseCount(); i++) {
+            House house = loadedBoard.getPlayer1().getHouses().get(i);
+            house.addSeed(getPlayer1State().getHouses().get(i));
+        }
+
+        // Restore P2 houses:
+        for (int i = 0; i < loadedBoard.getHouseCount(); i++) {
+            House house = loadedBoard.getPlayer2().getHouses().get(i);
+            house.addSeed(getPlayer2State().getHouses().get(i));
+        }
+
+        // Restore P1 and P2 stores:
+        loadedBoard.getPlayer1().getStore().addSeed(getPlayer1State().getStore());
+        loadedBoard.getPlayer2().getStore().addSeed(getPlayer2State().getStore());
+    }
 }
