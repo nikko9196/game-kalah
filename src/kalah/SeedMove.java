@@ -1,7 +1,5 @@
 package kalah;
 
-import com.qualitascorpus.testsupport.IO;
-
 import java.util.List;
 
 public class SeedMove {
