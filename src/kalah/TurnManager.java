@@ -13,38 +13,6 @@ public class TurnManager {
         this.opponent = opponent;
     }
 
-    public void takeTurn(int houseNumber, IO io) {
-        // Do the sowing
-        SeedMove seedMove = new SeedMove(currentPlayer);
-        seedMove.sow(currentPlayer, houseNumber, opponent, io);
-
-        // Check different situations after sowing:
-        if (seedMove.isLastSeedAtOwnStore()) {
-            return;
-        }
-
-        if (!seedMove.isLastSeedAtOwnHouse()) {
-            switchPlayer();
-            return;
-        }
-
-        int index = seedMove.getLastLandedHouseIndex();
-        House lastLandedHouse = currentPlayer.getHouses().get(index);
-
-
-        if (lastLandedHouse.countSeed() == 1) {
-            seedMove.captureSeeds(currentPlayer.getHouses(), opponent.getHouses(), index);
-        }
-
-        switchPlayer();
-    }
-
-    private void switchPlayer() {
-        Player temp = currentPlayer;
-        currentPlayer = opponent;
-        opponent = temp;
-    }
-
     public boolean hasMoveLeft() {
         for (House house : currentPlayer.getHouses()) {
             if (house.countSeed() > 0) {
@@ -74,6 +42,38 @@ public class TurnManager {
         }
 
         takeTurn(houseNumber, io);
+    }
+
+    private void takeTurn(int houseNumber, IO io) {
+        // Do the sowing
+        SeedMove seedMove = new SeedMove(currentPlayer);
+        seedMove.sow(currentPlayer, houseNumber, opponent, io);
+
+        // Check different situations after sowing:
+        if (seedMove.isLastSeedAtOwnStore()) {
+            return;
+        }
+
+        if (!seedMove.isLastSeedAtOwnHouse()) {
+            switchPlayer();
+            return;
+        }
+
+        int index = seedMove.getLastLandedHouseIndex();
+        House lastLandedHouse = currentPlayer.getHouses().get(index);
+
+
+        if (lastLandedHouse.countSeed() == 1) {
+            seedMove.captureSeeds(currentPlayer.getHouses(), opponent.getHouses(), index);
+        }
+
+        switchPlayer();
+    }
+
+    private void switchPlayer() {
+        Player temp = currentPlayer;
+        currentPlayer = opponent;
+        opponent = temp;
     }
 
     public Player getCurrentPlayer() {

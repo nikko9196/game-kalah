@@ -14,27 +14,6 @@ public class BoardSnapShot {
         this.currentPlayerName = currentPlayer.getName();
     }
 
-    private static class PlayerState {
-        private final List<Integer> houses;
-        private final int store;
-
-        PlayerState(Player player) {
-            this.houses = new ArrayList<>();
-            for (House house : player.getHouses()) {
-                this.houses.add(house.countSeed());
-            }
-            this.store = player.getStore().countSeed();
-        }
-
-        private List<Integer> getHouses() {
-            return houses;
-        }
-
-        private int getStore() {
-            return store;
-        }
-    }
-
     public String getCurrentPlayerName() {
         return currentPlayerName;
     }
@@ -55,5 +34,26 @@ public class BoardSnapShot {
         // Restore P1 and P2 stores:
         loadedBoard.getPlayer1().getStore().addSeed(player1State.getStore());
         loadedBoard.getPlayer2().getStore().addSeed(player2State.getStore());
+    }
+
+    private static class PlayerState {
+        private final List<Integer> houses;
+        private final int store;
+
+        PlayerState(Player player) {
+            this.houses = new ArrayList<>();
+            for (House house : player.getHouses()) {
+                this.houses.add(house.countSeed());
+            }
+            this.store = player.getStore().countSeed();
+        }
+
+        private List<Integer> getHouses() {
+            return houses;
+        }
+
+        private int getStore() {
+            return store;
+        }
     }
 }

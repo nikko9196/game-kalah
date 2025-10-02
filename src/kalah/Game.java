@@ -89,10 +89,10 @@ public class Game {
             return;
         }
 
-        // Create a board after loading:
+        // Create a new board after loading:
         Board loadedBoard = new Board(board.getHouseCount(), 0, false);
 
-        // Restore Players' houses and stores:
+        // Restore Players' houses and stores to a new board:
         lastSnap.restoreBoardState(loadedBoard);
 
         // Swap the loaded board into the game:

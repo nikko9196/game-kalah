@@ -5,7 +5,7 @@ public class House extends Pit {
         super(seeds);
     }
 
-    public int collectSeeds () {
+    public int collectSeeds() {
         int collectedSeeds = this.seeds;
         this.seeds = 0;
         return collectedSeeds;
