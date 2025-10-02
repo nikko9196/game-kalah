@@ -17,7 +17,7 @@ public class SeedMove {
         lastLandedHouseIndex = -1;
     }
 
-    public void sow(Player currentPlayer, int houseNumber, Player opponent, IO io) {
+    public void sow(Player currentPlayer, int houseNumber, Player opponent) {
         List<House> allHouses = currentPlayer.getHouses();
         int indexSelectedHouse = houseNumber - 1;
         int seedToSow = allHouses.get(indexSelectedHouse).collectSeeds();

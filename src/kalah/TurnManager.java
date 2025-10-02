@@ -41,13 +41,13 @@ public class TurnManager {
             return;
         }
 
-        takeTurn(houseNumber, io);
+        takeTurn(houseNumber);
     }
 
-    private void takeTurn(int houseNumber, IO io) {
+    private void takeTurn(int houseNumber) {
         // Do the sowing
         SeedMove seedMove = new SeedMove(currentPlayer);
-        seedMove.sow(currentPlayer, houseNumber, opponent, io);
+        seedMove.sow(currentPlayer, houseNumber, opponent);
 
         // Check different situations after sowing:
         if (seedMove.isLastSeedAtOwnStore()) {
