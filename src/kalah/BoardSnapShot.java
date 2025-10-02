@@ -14,13 +14,11 @@ public class BoardSnapShot {
         this.currentPlayerName = currentPlayer.getName();
     }
 
-    public static class PlayerState {
-        private final String name;
+    private static class PlayerState {
         private final List<Integer> houses;
         private final int store;
 
         PlayerState(Player player) {
-            this.name = player.getName();
             this.houses = new ArrayList<>();
             for (House house : player.getHouses()) {
                 this.houses.add(house.countSeed());
@@ -28,25 +26,13 @@ public class BoardSnapShot {
             this.store = player.getStore().countSeed();
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public List<Integer> getHouses() {
+        private List<Integer> getHouses() {
             return houses;
         }
 
-        public int getStore() {
+        private int getStore() {
             return store;
         }
-    }
-
-    public PlayerState getPlayer1State() {
-        return player1State;
-    }
-
-    public PlayerState getPlayer2State() {
-        return player2State;
     }
 
     public String getCurrentPlayerName() {
@@ -57,17 +43,17 @@ public class BoardSnapShot {
         // Restore P1 houses:
         for (int i = 0; i < loadedBoard.getHouseCount(); i++) {
             House house = loadedBoard.getPlayer1().getHouses().get(i);
-            house.addSeed(getPlayer1State().getHouses().get(i));
+            house.addSeed(player1State.getHouses().get(i));
         }
 
         // Restore P2 houses:
         for (int i = 0; i < loadedBoard.getHouseCount(); i++) {
             House house = loadedBoard.getPlayer2().getHouses().get(i);
-            house.addSeed(getPlayer2State().getHouses().get(i));
+            house.addSeed(player2State.getHouses().get(i));
         }
 
         // Restore P1 and P2 stores:
-        loadedBoard.getPlayer1().getStore().addSeed(getPlayer1State().getStore());
-        loadedBoard.getPlayer2().getStore().addSeed(getPlayer2State().getStore());
+        loadedBoard.getPlayer1().getStore().addSeed(player1State.getStore());
+        loadedBoard.getPlayer2().getStore().addSeed(player2State.getStore());
     }
 }
