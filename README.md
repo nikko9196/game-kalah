@@ -33,6 +33,23 @@ The project was developed using a modular object-oriented architecture to separa
 - Java 8+
 - IntelliJ IDEA (Recommended)
 
+## Getting Started
+
+### 1. Clone the Repository:
+
+```bash
+git clone https://github.com/nikko9196/game-kalah.git
+cd game-kalah
+```
+
+### 2. Running the Game:
+
+#### IntelliJ IDEA:
+
+1. Open the project in IntelliJ IDEA.
+2. Right-click on `Kalah.java` in `src/kalah/Kalah.java`, select `Run 'Kalah.main()'`.
+3. The game will start in the console.
+
 
 ## Project Structure
 
