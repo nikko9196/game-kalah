@@ -27,7 +27,7 @@ public class Game {
             io.println("    S - Save game");
             io.println("    L - Load game");
             io.println("    q - Quit");
-            io.print("Choice:");
+            io.print("Choice: ");
             String input = io.readFromKeyboard("");
 
             Command command = createCommand(input, io);
