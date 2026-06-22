@@ -6,7 +6,7 @@ This project demonstrates:
 
 - Object-Oriented Design Principles (OOP).
 - Design Patterns: Command Pattern and Memento Pattern.
-- Separation of Concerns
+- Separation of Concerns.
 - State Management.
 - Game Logic Implementation.
 - Maintainable Software Design.
